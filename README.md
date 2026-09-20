@@ -66,9 +66,9 @@ cd frontend && npm install && cd ..
 
 ### 3. Seed demo data (optional but recommended)
 ```bash
-cd backend && MEMBER_TRACKER_DB_PATH=member_tracker.db python3 seed_demo.py && cd ..
+./seed.sh
 ```
-This seeds 29 real chapter members, logs engagement activities, records renewals, computes health scores, and adds 4 pending membership applications for the demo.
+This seeds the demo chapter (~30 members), logs engagement activities, records renewals, computes health scores, and adds 4 pending membership applications for the demo. (Equivalent to `cd backend && MEMBER_TRACKER_DB_PATH=member_tracker.db python3 seed_demo.py`.)
 
 ### 4. Run it
 ```bash

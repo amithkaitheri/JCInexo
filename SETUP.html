@@ -104,10 +104,8 @@ cd ..</code></pre>
   <p class="muted">Tip: use a Python virtual environment — <code>python3 -m venv .venv &amp;&amp; source .venv/bin/activate</code> — before <code>pip install</code>.</p>
 
   <div class="step"><span class="num">4</span><h3 style="margin:.2rem 0">Seed demo data (recommended)</h3></div>
-  <pre><code>cd backend
-MEMBER_TRACKER_DB_PATH=member_tracker.db python3 seed_demo.py
-cd ..</code></pre>
-  <p class="muted">Seeds 29 members, engagement activities, renewals, computed health scores, and 4 pending membership applications for the demo.</p>
+  <pre><code>./seed.sh</code></pre>
+  <p class="muted">Seeds ~30 members, engagement activities, renewals, computed health scores, and 4 pending membership applications for the demo. (Same as <code>cd backend &amp;&amp; MEMBER_TRACKER_DB_PATH=member_tracker.db python3 seed_demo.py</code>.)</p>
 
   <div class="step"><span class="num">5</span><h3 style="margin:.2rem 0">Run the app</h3></div>
   <pre><code>./start.sh          # starts backend (:8000) + dashboard (:5176)</code></pre>
