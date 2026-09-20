@@ -289,9 +289,9 @@ class LeaderboardResponse(_BaseModel):
 _RANK_MAP = {
     "rookie":      ("Owlet",        "🐣"),
     "contributor": ("Scout",        "🦉"),
-    "active":      ("Ranger",       "🌲"),
-    "leader":      ("Trailblazer",  "🏔️"),
-    "champion":    ("Trail Master", "👑"),
+    "active":      ("Glider",       "🌲"),
+    "leader":      ("Ranger",       "🏔️"),
+    "champion":    ("Wise Owl",     "👑"),
 }
 
 
