@@ -6,6 +6,8 @@
 
 JCI NEXO helps a chapter president see, at a glance, who is thriving, who is at risk of drifting away, and who is about to age out — then take action: log engagement, draft AI outreach, review membership applications, and run the annual leadership handover. An AI mentor, **Wellington the Wise**, powers conversational insights and personalized retention advice (Google Gemini, with a deterministic fallback so it always works offline).
 
+Members get their own experience through **ImpactQuest** (the Owl Trail) — a gamified member portal where they log in, play a daily **Trail Trivia** mini-game, earn engagement points, climb the ranks (Owlet → Scout → Glider → Ranger → Wise Owl), unlock badges, and compete on a live chapter leaderboard. Points earned in the game flow straight into each member's profile, health score, and the president's dashboard in real time.
+
 ---
 
 ## ✨ Features
@@ -24,6 +26,9 @@ JCI NEXO helps a chapter president see, at a glance, who is thriving, who is at 
 | **Age-out & At-risk alerts** | Surfaces members within 30 days of aging out and the contiguous at-risk list. |
 | **Handover Quest** | A guided 3-step annual leadership handover that captures an immutable chapter snapshot. |
 | **President login** | A sign-in screen gates the dashboard. |
+| **ImpactQuest — Member login** | A secure member portal (email + password, JWT sessions). On login, members land on their personal **Basecamp** profile showing rank, points, tier progress, streak, health score, and earned badges. Logins are provisioned by the LP from the admin panel. |
+| **ImpactQuest — Trail Trivia** | A daily 3-question JCI quiz (history, leadership, global initiatives, Ottawa). Under 2 minutes to play, one round per day, with a live countdown per question. Scoring: +15 per correct answer, +10 perfect-round bonus, +5 streak bonus. Points write straight to the member's ledger. |
+| **ImpactQuest — Ranks & Leaderboard** | Members progress through five Owl Trail ranks (Owlet → Scout → Glider → Ranger → Wise Owl) as points accumulate. A live global leaderboard ranks every member by total engagement points, visible to both members and the president. Crossing a threshold triggers a rank-up celebration; qualifying attendance unlocks badges. |
 
 ---
 
@@ -77,7 +82,12 @@ This seeds the demo chapter (~30 members), logs engagement activities, records r
 ```
 Open **http://localhost:5176**.
 
-**Demo login:** username `president` · password `jciottawa2026`
+**Demo president login:** username `president` · password `jciottawa2026`
+**Demo member login (ImpactQuest):** email `member@example.com` · password `impactquest`
+
+> The login screen toggles between the **Member Login** (ImpactQuest / Owl Trail) and the **LP Login** (president dashboard). The demo member account is provisioned automatically by `./seed.sh` and tied to a real seeded member, so their rank, points, and badges are populated on first sign-in.
+
+> **Note:** ImpactQuest adds two backend dependencies (`bcrypt`, `python-jose`). They're in `requirements.txt`, but if you're upgrading an existing install, run `pip install -r backend/requirements.txt` again. Until they're installed, the member-auth and trivia endpoints stay dormant and the president dashboard is unaffected.
 
 > The Vite dev server proxies `/api/*` to the backend on port 8000, so both run together.
 
@@ -87,13 +97,19 @@ Open **http://localhost:5176**.
 
 Base URL: `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
-Administrative endpoints require an `X-API-Key` header (default `member-tracker-dev-key`).
+Administrative endpoints require an `X-API-Key` header (default `member-tracker-dev-key`). Member-facing ImpactQuest endpoints (`/api/member/me`, `/api/trivia/*`) require a member JWT sent as `Authorization: Bearer <token>`, issued by `/api/member/login`.
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET`  | `/api/health` | Health check |
 | `POST` | `/api/login` | President sign-in |
 | `GET`  | `/api/whoami` | Identity + greeting |
+| `POST` | `/api/member/register` | Provision a member login (LP-only, admin-guarded) |
+| `POST` | `/api/member/login` | Member sign-in → JWT access token |
+| `GET`  | `/api/member/me` | Authenticated member's Basecamp profile (rank, points, badges, streak) |
+| `GET`  | `/api/trivia/daily` | Today's 3 Trail Trivia questions (member token) |
+| `POST` | `/api/trivia/daily/submit` | Submit answers → score, points, rank-up, badges (member token) |
+| `GET`  | `/api/leaderboard` | Live points leaderboard (global, ranked) |
 | `GET`  | `/api/dashboard` | Paginated member rows (health, stage, at-risk, age-out) |
 | `GET`/`POST` | `/api/members` | List / create members |
 | `PATCH`| `/api/members/{id}/stage` | Change membership stage |
@@ -135,6 +151,7 @@ member-growth-tracker/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/  # Dashboard, Trail, Pulse, Events, Messages, Login, …
+│   │   │                #   ImpactQuest: MemberLogin, Basecamp, TrailTrivia, Leaderboard
 │   │   ├── App.jsx
 │   │   ├── api.js       # Dependency-free API client
 │   │   └── App.css      # Dark theme (CSS variables)
@@ -161,10 +178,11 @@ where `activity = clamp(total_engagement_points / 300, 0, 1)`. Weights must sum 
 
 - Secrets via `.env` (git-ignored) — no keys in code.
 - Admin endpoints guarded by an `X-API-Key` header.
+- Member logins use bcrypt-hashed passwords (never plaintext) and stateless JWT sessions (24h expiry, `HS256`). The signing secret is read from `MEMBER_JWT_SECRET`; set it to a strong value in production. Member accounts are provisioned by the LP, not self-service, so only approved members get access.
 - The LLM is fully optional and isolated in `io/`; every AI path has a deterministic fallback, so the app never hangs or fails because of the model.
 - LLM-recommended events are re-verified against real search results, so a hallucinating model cannot inject fake events.
 
-> **Note:** the demo login and the outreach "send" are demo-grade (plain credential check; simulated delivery). Swapping in a real identity provider and email provider (e.g. AWS SES) are drop-in changes at their respective seams. See `SCALING_PLAN.md` and `AWS_ARCHITECTURE.md`.
+> **Note:** the president login and the outreach "send" are demo-grade (plain credential check; simulated delivery). The ImpactQuest member login is closer to production (bcrypt hashes + JWT), but a full deployment would still add a real identity provider, refresh tokens, and an email provider (e.g. AWS SES). These are drop-in changes at their respective seams. See `SCALING_PLAN.md` and `AWS_ARCHITECTURE.md`.
 
 ---
 
