@@ -1,0 +1,714 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create package skeleton, shared types, clock, and test config": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927789
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506937455
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507116981
+      }
+    ],
+    "2.1 Implement all validators in `core/validation.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927797
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507122325
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507243049
+      }
+    ],
+    "3.1 Implement `age_out_status(age_out_date, current_date)` in `core/age_out.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927805
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507123718
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507244433
+      }
+    ],
+    "4.1 Implement attendance logic in `core/attendance.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927810
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507125195
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507245391
+      }
+    ],
+    "5.1 Implement scoring in `core/health_score.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927816
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507125938
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507246461
+      }
+    ],
+    "6.1 Implement `build_dashboard(...)` in `core/dashboard.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927826
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507251143
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507394743
+      }
+    ],
+    "7. Checkpoint - pure domain core complete": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927830
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507446804
+      }
+    ],
+    "8.1 Create schema and `init_db()` in `io/database.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927833
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507459549
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507578708
+      }
+    ],
+    "8.2 Implement member + config repository methods in `io/repository.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927836
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507582062
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507768682
+      }
+    ],
+    "8.3 Implement attendance + health-score repository methods in `io/repository.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927839
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507773534
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507904988
+      }
+    ],
+    "9.1 Implement snapshot/export in `io/snapshot_service.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927842
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507909324
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508128005
+      }
+    ],
+    "10. Checkpoint - persistence and snapshot layers complete": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927845
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508132326
+      }
+    ],
+    "11.1 Define request/response schemas and app wiring in `api/schemas.py` and `api/app.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927848
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508248330
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508452999
+      }
+    ],
+    "11.2 Implement member, age-out, and attendance routes in `api/routes_members.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927851
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508456702
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508695690
+      }
+    ],
+    "11.3 Implement dashboard, config, handover, and export routes in `api/routes_dashboard.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927853
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508457940
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508902007
+      }
+    ],
+    "12. Checkpoint - backend API complete": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927856
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508921123
+      }
+    ],
+    "13.1 Scaffold the frontend app and API client": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927859
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508932151
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509146626
+      }
+    ],
+    "13.2 Implement the member list, filter, and pagination UI in `src/components/MemberDashboard.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927862
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509153019
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509306798
+      }
+    ],
+    "13.3 Implement alerts, at-risk section, and error handling in `src/components/AlertsPanel.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927866
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509154378
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509503883
+      }
+    ],
+    "13.4 Implement threshold config, attendance entry, and handover/export controls in `src/components/AdminControls.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927869
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509155747
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509506493
+      }
+    ],
+    "14.1 Implement schema-bounded criteria types, `validate_criteria`, and `evaluate_criteria` in `core/criteria.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927871
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509512787
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509721823
+      }
+    ],
+    "15.1 Implement `interpret_query` in `io/query_interpreter.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927874
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509731064
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509931158
+      }
+    ],
+    "15.5 Add the `POST /api/query` route in `api/routes_query.py` and wire it into the app": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927877
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510160536
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510358325
+      }
+    ],
+    "15.7 Implement the natural-language query UI in `src/components/MemberQuery.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927880
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510361683
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510521116
+      }
+    ],
+    "15.8 Implement the pure `parse_query_deterministic` deterministic query parser": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927883
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509729855
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509932303
+      }
+    ],
+    "15.10 Extend `interpret_query` in `io/query_interpreter.py` with the 5s dispatch budget, deterministic fallback, and source tagging": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927885
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509936482
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510156783
+      }
+    ],
+    "15.13 Surface `source` in the `POST /api/query` response and add the fallback indicator to `MemberQuery.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927888
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510530320
+      }
+    ],
+    "16.1 Add retention value objects and `verify_recommendation` in `core/recommendation.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927891
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510545106
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510708153
+      }
+    ],
+    "16.4 Implement the pure `build_templated_recommendation` assembler in `core/recommendation.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927894
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510711682
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510822158
+      }
+    ],
+    "17.1 Add the `RETENTION_RECOMMENDATION` table to the schema in `io/database.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927897
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510823385
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510933951
+      }
+    ],
+    "17.2 Implement retention repository methods in `io/repository.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927901
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510934751
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789511113142
+      }
+    ],
+    "18.1 Implement `search_events` in `io/web_search_tool.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927905
+      },
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789511114063
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511755263
+      }
+    ],
+    "18.3 Implement `generate_recommendation` in `io/wellington_agent.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927907
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511454206
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511751092
+      }
+    ],
+    "18.7 Extend `generate_recommendation` in `io/wellington_agent.py` with the LLM-unavailable template fallback branch": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927910
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511760153
+      }
+    ],
+    "19.1 Add recommendation routes in `api/routes_recommendations.py` and register them in `api/app.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927913
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511799061
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511980950
+      }
+    ],
+    "19.2 Surface the intervention-eligible flag on the dashboard route in `api/routes_dashboard.py`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927916
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511984758
+      }
+    ],
+    "19.4 Implement the Wellington recommendation UI card in `src/components/WellingtonAdviceCard.jsx`": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927919
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511989841
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789512174294
+      }
+    ],
+    "20. Final checkpoint - full system wired end to end": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789506927922
+      },
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789512269813
+      }
+    ],
+    "1. Set up backend project structure, domain value types, and testing frameworks": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507116985
+      }
+    ],
+    "2. Implement the Validation component (pure)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507243058
+      }
+    ],
+    "3. Implement the Age-Out Engine (pure)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507244436
+      }
+    ],
+    "4. Implement the Attendance Engine (pure)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507245397
+      }
+    ],
+    "5. Implement the Health Score Engine (pure)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507246465
+      }
+    ],
+    "6. Implement the Dashboard Assembler (pure)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507394747
+      }
+    ],
+    "8. Implement the SQLite schema and repository (I/O adapter)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789507904992
+      }
+    ],
+    "9. Implement the Snapshot & Export service (I/O adapter)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508128009
+      }
+    ],
+    "11. Implement the FastAPI HTTP layer": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789508902010
+      }
+    ],
+    "13. Implement the React + Vite dashboard frontend": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509506497
+      }
+    ],
+    "14. Implement the Criteria Evaluator and Validator (pure) for natural-language querying": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789509721827
+      }
+    ],
+    "15. Implement the Query Interpreter (I/O adapter), the query endpoint, and the NL query UI": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789510530324
+      }
+    ],
+    "17. Extend the SQLite schema and repository with retention recommendations (I/O adapter)": [
+      {
+        "executionId": "89ca0b23-30e7-4f90-99ed-8d71a53767e3",
+        "chatSessionId": "sess_55987a7a-3d8a-4542-8f5f-2421f6b987bd",
+        "timestamp": 1789511113146
+      }
+    ],
+    "18. Implement the Web Search Tool adapter and the Wellington Retention Agent (I/O orchestrator)": [
+      {
+        "executionId": "3e030db3-c27c-4309-90d2-516558f9ae33",
+        "chatSessionId": "cli_46ca934b-8704-40d9-84cd-0f1d66257f70_AXrYavwm",
+        "timestamp": 1789511760155
+      }
+    ]
+  }
+}

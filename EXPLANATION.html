@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JCI NEXO — How It Works</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111a2e; --panel2:#0f1729; --text:#e6edf6;
+    --muted:#93a4c0; --accent:#009CDE; --ok:#34d399; --warn:#f59e0b;
+    --danger:#f87171; --border:#1e2b45; --gold:#F2B705;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+  header{display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem}
+  .logo{width:56px;height:56px;flex:none;background:var(--panel2);border:1px solid var(--border);
+    border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,156,222,.28)}
+  h1{margin:0;font-size:1.9rem;font-weight:800;letter-spacing:.06em}
+  h1 .accent{background:linear-gradient(90deg,#009CDE,#00C6FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .tag{margin:.25rem 0 0;color:var(--muted);text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;font-weight:600}
+  h2{margin:2.4rem 0 .8rem;font-size:1.35rem;border-left:3px solid var(--accent);padding-left:.7rem}
+  h3{margin:1.6rem 0 .5rem;font-size:1.08rem;color:var(--text)}
+  p,li{color:var(--text)}
+  .muted{color:var(--muted)}
+  code{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:.1rem .4rem;font-size:.92em;color:#bfe4ff}
+  pre{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:1rem;overflow:auto}
+  pre code{border:0;background:none;padding:0}
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.95rem}
+  th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:.72rem;letter-spacing:.04em}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;margin:1rem 0}
+  .pill{display:inline-block;padding:.15rem .6rem;border-radius:999px;background:rgba(0,156,222,.14);border:1px solid var(--border);font-size:.82rem;font-weight:600;margin:.15rem .2rem}
+  .gold{color:var(--gold)}
+  footer{margin-top:3rem;border-top:1px solid var(--border);padding-top:1.2rem;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="logo">
+      <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+        <g stroke="#2C63A5" stroke-width="1.6" stroke-linecap="round">
+          <line x1="24" y1="5" x2="40.5" y2="14.5"/><line x1="24" y1="5" x2="40.5" y2="33.5"/>
+          <line x1="24" y1="5" x2="24" y2="43"/><line x1="24" y1="5" x2="7.5" y2="33.5"/>
+          <line x1="24" y1="5" x2="7.5" y2="14.5"/><line x1="40.5" y1="14.5" x2="40.5" y2="33.5"/>
+          <line x1="40.5" y1="14.5" x2="24" y2="43"/><line x1="40.5" y1="14.5" x2="7.5" y2="33.5"/>
+          <line x1="40.5" y1="14.5" x2="7.5" y2="14.5"/><line x1="40.5" y1="33.5" x2="24" y2="43"/>
+          <line x1="40.5" y1="33.5" x2="7.5" y2="33.5"/><line x1="40.5" y1="33.5" x2="7.5" y2="14.5"/>
+          <line x1="24" y1="43" x2="7.5" y2="33.5"/><line x1="24" y1="43" x2="7.5" y2="14.5"/>
+          <line x1="7.5" y1="33.5" x2="7.5" y2="14.5"/>
+        </g>
+        <circle cx="27" cy="22" r="3" fill="#F2B705"/><circle cx="33.5" cy="19" r="3" fill="#F2B705"/>
+        <circle cx="19" cy="25" r="2.1" fill="#5BB0B5"/>
+        <circle cx="24" cy="5" r="3.4" fill="#009CDE"/><circle cx="40.5" cy="14.5" r="3.4" fill="#1B3B6F"/>
+        <circle cx="40.5" cy="33.5" r="3.4" fill="#1B3B6F"/><circle cx="24" cy="43" r="3.4" fill="#1B3B6F"/>
+        <circle cx="7.5" cy="33.5" r="3.4" fill="#5BB0B5"/><circle cx="7.5" cy="14.5" r="3.4" fill="#009CDE"/>
+      </svg>
+    </span>
+    <div>
+      <h1>JCI <span class="accent">NEXO</span></h1>
+      <p class="tag">Connect. Lead. Impact.</p>
+    </div>
+  </header>
+
+  <p class="muted">This document explains what JCI NEXO does and how it works under the hood. For installation, open <code>SETUP.html</code>.</p>
+
+  <h2>1. The Problem</h2>
+  <p>A JCI chapter loses members quietly — someone stops showing up, their membership lapses, or they age out (JCI membership ends at 40) before anyone reaches out. A chapter president needs to <strong>see who is drifting</strong> and <strong>act before it's too late</strong>. JCI NEXO turns scattered attendance and activity data into a single, actionable picture of chapter health.</p>
+
+  <h2>2. What You See</h2>
+  <div class="card">
+    <p><strong>Dashboard</strong> — every member as a row: membership stage, age-out status, attendance, a <strong>health score</strong> (0–100), and an at-risk flag.</p>
+    <p><strong>Wellington's Trail</strong> — a gamified, points-based progress trail for a selected member, with the AI mascot "Wellington the Wise."</p>
+    <p><strong>Chapter Pulse</strong> — analytics: stage funnel, health distribution, at-risk / mentorship / retention gauges.</p>
+    <p><strong>Events &amp; Outreach</strong> — nearby events, interest-matched members, one-click AI outreach.</p>
+    <p><strong>Messages</strong> — a membership-application inbox with approve / decline + AI-drafted emails.</p>
+    <p><strong>Alerts</strong> — age-out (within 30 days) and at-risk lists.</p>
+  </div>
+
+  <h2>3. The Health Score</h2>
+  <p>Each member's health is a weighted blend of four signals, normalized to 0–100:</p>
+  <pre><code>health_score = 0.35·attendance   (depth of event participation)
+             + 0.20·recency      (how recently they engaged)
+             + 0.15·stage        (progress through membership stages)
+             + 0.30·activity      (engagement points, see below)</code></pre>
+  <p class="muted">The four weights must sum to 1. A score at or below the configurable <em>at-risk threshold</em> flags the member. The mascot is <strong>reason-aware</strong> — it distinguishes a low-engagement alert from an age-out (renewal) alert, and treats an <em>Inactive</em> member as a win-back priority.</p>
+
+  <h2>4. Engagement Points</h2>
+  <p>Members earn points for real JCI activities. Points feed the <code>activity</code> signal above as <code>clamp(total_points / 300, 0, 1)</code> — 300 points maxes it out.</p>
+  <table>
+    <tr><th>Activity (sample)</th><th>Points</th></tr>
+    <tr><td>Attend a local JCI event / General Assembly</td><td>+10</td></tr>
+    <tr><td>Volunteer at an event</td><td>+20</td></tr>
+    <tr><td>Help plan / MC / speak at an event</td><td>+30</td></tr>
+    <tr><td>Lead an event / project</td><td>+50</td></tr>
+    <tr><td>Join a local / national committee</td><td>+25 / +50</td></tr>
+    <tr><td>Hold a local board / national leadership position</td><td>+75 / +100</td></tr>
+    <tr><td>Attend Regional / Area / National conference</td><td>+50 / +75 / +100</td></tr>
+    <tr><td>Attend World Congress</td><td>+150</td></tr>
+  </table>
+
+  <h3>Trail tiers (by total points)</h3>
+  <p>
+    <span class="pill">🐾 Rookie · 0</span>
+    <span class="pill">🌱 Contributor · 25</span>
+    <span class="pill">🔥 Active Member · 75</span>
+    <span class="pill">🏆 Chapter Leader · 150</span>
+    <span class="pill">👑 Chapter Champion · 300</span>
+  </p>
+
+  <h2>5. Wellington the Wise (AI)</h2>
+  <p>Wellington powers three AI experiences, all backed by Google Gemini with a deterministic fallback so the app always works — even offline or without a key:</p>
+  <ul>
+    <li><strong>Ask Wellington</strong> — conversational Q&amp;A grounded strictly in live chapter data (member counts, health, at-risk, stages, badges, engagement points &amp; tiers). It answers only from a factual snapshot, so it never invents members or numbers.</li>
+    <li><strong>Retention advice</strong> — for an at-risk member, Wellington writes a diagnosis, recommends real in-window events, and drafts an outreach message. Recommended events are re-verified against the actual search results, so a hallucinated event is discarded before it reaches the president.</li>
+    <li><strong>Outreach &amp; application emails</strong> — warm, on-brand invitation, welcome, and decline emails.</li>
+  </ul>
+
+  <h2>6. Architecture</h2>
+  <div class="card">
+    <p><strong>Pure core.</strong> <code>backend/member_tracker/core/</code> holds the domain logic — health score, gamification, activity points, attendance — with <em>no I/O</em>. It's deterministic and easy to reason about.</p>
+    <p><strong>Single I/O choke point.</strong> <code>io/repository.py</code> is the only place that touches SQLite. The Gemini client and synthesizers live in <code>io/</code> too, isolated behind interfaces.</p>
+    <p><strong>Thin API.</strong> <code>api/</code> route modules translate HTTP to core/repository calls. The FastAPI app registers each route best-effort.</p>
+    <p><strong>Frontend.</strong> React 19 + Vite, a dependency-free API client (<code>src/api.js</code>), and a dark theme driven by CSS variables. No heavyweight UI framework.</p>
+  </div>
+  <pre><code>Browser (React)  ──HTTP──▶  FastAPI routes  ──▶  Repository (SQLite)
+                                    │
+                                    └──▶  Gemini (optional) ──▶ deterministic fallback</code></pre>
+
+  <h2>7. Safety &amp; Governance</h2>
+  <ul>
+    <li>Secrets via git-ignored <code>.env</code>; admin endpoints require an <code>X-API-Key</code>.</li>
+    <li>The LLM is optional and time-bounded; every AI path degrades gracefully to a deterministic result.</li>
+    <li>AI event recommendations are verified against real data — no fabricated events.</li>
+    <li>The annual <strong>Handover Quest</strong> captures an immutable chapter snapshot for a clean leadership transition.</li>
+  </ul>
+
+  <footer>
+    JCI NEXO — a JCI Ottawa initiative for the JCI World Hackathon 2026. Wellington the Wise 🦉 will guide you along the trail.
+  </footer>
+</div>
+</body>
+</html>

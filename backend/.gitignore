@@ -1,0 +1,10 @@
+# Secrets / local environment — never commit a real API key.
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local SQLite database
+member_tracker.db

@@ -1,0 +1,45 @@
+{
+  "name": "agenttrace",
+  "description": "AgentTrace — Unified AI Observability Platform for multi-agent AI applications",
+  "prompt": "You are the AgentTrace agent — a Unified AI Observability Platform operator. Your platform runs on port 8002 (backend) and port 5175 (dashboard). You can ingest traces from any AI app, auto-redact PII, detect anomalies, track costs, and configure alerts. The demo runner at agenttrace/demo/demo_runner.py simulates 3 AI apps (ReadyAI-Emergency, ChatBot-Support, RAG-Search) sending traces. Skills: run demo (python3 demo_runner.py --count N), detect anomalies (GET /api/anomalies), cost report (GET /api/metrics), replay trace (GET /api/traces/{id}), configure alerts (POST /api/alerts/rules). Always check platform health first: curl http://localhost:8002/api/health. Track 5 — Unified AI Observability.",
+  "tools": ["read", "write", "shell", "grep", "glob", "code"],
+  "allowedTools": ["read", "grep", "glob", "code"],
+  "toolsSettings": {
+    "write": {
+      "allowedPaths": ["agenttrace/**"]
+    },
+    "shell": {
+      "allowedCommands": [
+        "cd agenttrace/demo && python3 demo_runner.py",
+        "curl.*localhost:8002",
+        "cd agenttrace && ./start.sh",
+        "cd agenttrace && ./stop.sh",
+        "cd agenttrace && ./setup.sh",
+        "cat agenttrace/"
+      ],
+      "autoAllowReadonly": true
+    }
+  },
+  "resources": [
+    "file://agenttrace/steering.md",
+    "file://agenttrace/server/*.py",
+    "file://agenttrace/demo/*.py",
+    "file://agenttrace/skills/*/SKILL.md",
+    "file://agenttrace/README.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      { "command": "bash agenttrace/hooks/startup-check.sh" }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "write",
+        "command": "bash agenttrace/hooks/pii-check.sh"
+      }
+    ],
+    "stop": [
+      { "command": "bash agenttrace/hooks/cost-guard.sh" }
+    ]
+  },
+  "welcomeMessage": "🔭 AgentTrace agent active. Platform: http://localhost:8002 | Dashboard: http://localhost:5175"
+}

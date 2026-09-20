@@ -1,0 +1,39 @@
+# --- Secrets / environment ---
+.env
+**/.env
+!**/.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# --- Database & runtime ---
+*.db
+*.sqlite
+*.sqlite3
+.run/
+*.log
+*.pid
+
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- OS / editor ---
+.DS_Store
+**/.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# --- Excel lock/temp files ---
+~$*.xlsx
+
+# --- Real member data (PII) — do not commit to a public repo ---
+Membership_Memberships_*.xlsx
+WhatsApp Image*.jpeg

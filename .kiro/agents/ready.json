@@ -1,0 +1,44 @@
+{
+  "name": "ready",
+  "description": "READY — Personalized Climate Emergency Response AI development agent",
+  "prompt": "You are working on READY, a personalized climate emergency response app for Ottawa, Canada. Backend is FastAPI (Python) on port 8001, frontend is React/Vite on port 5174. The app uses Environment Canada live weather/AQHI data, filters Ottawa resources by user profile (accessibility, pets, transport), and calls Gemini AI to generate personalized emergency action plans. Every AI decision must be traced in the Flight Recorder (SQLite). SDG Goal 13 — Climate Action. Track 5 — Unified AI Observability.",
+  "tools": ["read", "write", "shell", "grep", "glob", "code"],
+  "allowedTools": ["read", "grep", "glob", "code"],
+  "toolsSettings": {
+    "write": {
+      "allowedPaths": ["ready/**"]
+    },
+    "shell": {
+      "allowedCommands": [
+        "cd ready && python -m pytest",
+        "curl.*localhost:8001",
+        "cd ready/frontend && bun",
+        "cd ready/backend && python -m ruff",
+        "cat ready/"
+      ],
+      "autoAllowReadonly": true
+    }
+  },
+  "resources": [
+    "file://ready/backend/*.py",
+    "file://ready/frontend/src/**/*.jsx",
+    "file://ready/README.md",
+    "skill://.kiro/skills/*/SKILL.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      { "command": "cd ready && git status --short 2>/dev/null || echo 'Not a git repo'" }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "write",
+        "command": "cd ready/backend && python3 -m py_compile main.py 2>&1 || true"
+      }
+    ],
+    "stop": [
+      { "command": "curl -s http://localhost:8001/api/health 2>/dev/null || echo '{\"status\": \"backend not running\"}'" }
+    ]
+  },
+  "keyboardShortcut": "ctrl+shift+r",
+  "welcomeMessage": "🛡️ READY agent active. Working on personalized climate emergency response AI."
+}

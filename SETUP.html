@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JCI NEXO — Setup Guide</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111a2e; --panel2:#0f1729; --text:#e6edf6;
+    --muted:#93a4c0; --accent:#009CDE; --ok:#34d399; --warn:#f59e0b;
+    --danger:#f87171; --border:#1e2b45; --gold:#F2B705;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
+  header{display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem;margin-bottom:2rem}
+  .logo{width:56px;height:56px;flex:none;background:var(--panel2);border:1px solid var(--border);
+    border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,156,222,.28)}
+  h1{margin:0;font-size:1.9rem;font-weight:800;letter-spacing:.06em}
+  h1 .accent{background:linear-gradient(90deg,#009CDE,#00C6FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .tag{margin:.25rem 0 0;color:var(--muted);text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;font-weight:600}
+  h2{margin:2.2rem 0 .6rem;font-size:1.3rem}
+  .step{display:flex;gap:.7rem;align-items:baseline}
+  .num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#00131f;font-weight:800;
+    display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+  code{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:.1rem .4rem;font-size:.92em;color:#bfe4ff}
+  pre{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:1rem;overflow:auto;margin:.6rem 0 1.2rem}
+  pre code{border:0;background:none;padding:0;color:#d7e6ff}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.3rem;margin:1rem 0}
+  .note{border-left:3px solid var(--accent);background:rgba(0,156,222,.08)}
+  .warn{border-left:3px solid var(--warn);background:rgba(245,158,11,.08)}
+  .muted{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin:.6rem 0 1.2rem;font-size:.95rem}
+  th,td{text-align:left;padding:.5rem .7rem;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+  kbd{background:var(--panel2);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:.05rem .4rem;font-size:.85em}
+  footer{margin-top:3rem;border-top:1px solid var(--border);padding-top:1.2rem;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="logo">
+      <svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true">
+        <g stroke="#2C63A5" stroke-width="1.6" stroke-linecap="round">
+          <line x1="24" y1="5" x2="40.5" y2="14.5"/><line x1="24" y1="5" x2="40.5" y2="33.5"/>
+          <line x1="24" y1="5" x2="24" y2="43"/><line x1="24" y1="5" x2="7.5" y2="33.5"/>
+          <line x1="24" y1="5" x2="7.5" y2="14.5"/><line x1="40.5" y1="14.5" x2="40.5" y2="33.5"/>
+          <line x1="40.5" y1="14.5" x2="24" y2="43"/><line x1="40.5" y1="14.5" x2="7.5" y2="33.5"/>
+          <line x1="40.5" y1="14.5" x2="7.5" y2="14.5"/><line x1="40.5" y1="33.5" x2="24" y2="43"/>
+          <line x1="40.5" y1="33.5" x2="7.5" y2="33.5"/><line x1="40.5" y1="33.5" x2="7.5" y2="14.5"/>
+          <line x1="24" y1="43" x2="7.5" y2="33.5"/><line x1="24" y1="43" x2="7.5" y2="14.5"/>
+          <line x1="7.5" y1="33.5" x2="7.5" y2="14.5"/>
+        </g>
+        <circle cx="27" cy="22" r="3" fill="#F2B705"/><circle cx="33.5" cy="19" r="3" fill="#F2B705"/>
+        <circle cx="19" cy="25" r="2.1" fill="#5BB0B5"/>
+        <circle cx="24" cy="5" r="3.4" fill="#009CDE"/><circle cx="40.5" cy="14.5" r="3.4" fill="#1B3B6F"/>
+        <circle cx="40.5" cy="33.5" r="3.4" fill="#1B3B6F"/><circle cx="24" cy="43" r="3.4" fill="#1B3B6F"/>
+        <circle cx="7.5" cy="33.5" r="3.4" fill="#5BB0B5"/><circle cx="7.5" cy="14.5" r="3.4" fill="#009CDE"/>
+      </svg>
+    </span>
+    <div>
+      <h1>JCI <span class="accent">NEXO</span> — Setup</h1>
+      <p class="tag">Get running in ~5 minutes</p>
+    </div>
+  </header>
+
+  <h2>Prerequisites</h2>
+  <table>
+    <tr><th>Tool</th><th>Version</th><th>Check</th></tr>
+    <tr><td>Python</td><td>3.11+</td><td><code>python3 --version</code></td></tr>
+    <tr><td>Node.js</td><td>18+</td><td><code>node --version</code></td></tr>
+    <tr><td>npm</td><td>(bundled with Node)</td><td><code>npm --version</code></td></tr>
+  </table>
+  <div class="card note">
+    <strong>Gemini API key is optional.</strong> Without it, the AI features (Ask Wellington, retention advice, outreach emails) automatically use a built-in deterministic fallback, so everything still works. Get a free key at <code>aistudio.google.com/app/apikey</code>.
+  </div>
+
+  <h2>Steps</h2>
+
+  <div class="step"><span class="num">1</span><h3 style="margin:.2rem 0">Clone the repository</h3></div>
+  <pre><code>git clone https://github.com/amithkaitheri/JCInexo.git
+cd JCInexo</code></pre>
+
+  <div class="step"><span class="num">2</span><h3 style="margin:.2rem 0">Configure environment files</h3></div>
+  <pre><code># Backend
+cp backend/.env.example backend/.env
+# (optional) open backend/.env and set:  GEMINI_API_KEY=your-key
+
+# Frontend
+cp frontend/.env.example frontend/.env</code></pre>
+
+  <div class="step"><span class="num">3</span><h3 style="margin:.2rem 0">Install dependencies</h3></div>
+  <pre><code># Backend (Python)
+cd backend
+pip install -r requirements.txt
+cd ..
+
+# Frontend (Node)
+cd frontend
+npm install
+cd ..</code></pre>
+  <p class="muted">Tip: use a Python virtual environment — <code>python3 -m venv .venv &amp;&amp; source .venv/bin/activate</code> — before <code>pip install</code>.</p>
+
+  <div class="step"><span class="num">4</span><h3 style="margin:.2rem 0">Seed demo data (recommended)</h3></div>
+  <pre><code>cd backend
+MEMBER_TRACKER_DB_PATH=member_tracker.db python3 seed_demo.py
+cd ..</code></pre>
+  <p class="muted">Seeds 29 members, engagement activities, renewals, computed health scores, and 4 pending membership applications for the demo.</p>
+
+  <div class="step"><span class="num">5</span><h3 style="margin:.2rem 0">Run the app</h3></div>
+  <pre><code>./start.sh          # starts backend (:8000) + dashboard (:5176)</code></pre>
+  <p>Then open <strong>http://localhost:5176</strong>. To stop everything:</p>
+  <pre><code>./stop.sh</code></pre>
+  <div class="card note">
+    <strong>Manual alternative</strong> (two terminals):
+    <pre style="margin:.6rem 0 0"><code># Terminal 1 — backend
+cd backend
+python3 -m uvicorn member_tracker.api.app:app --host 0.0.0.0 --port 8000
+
+# Terminal 2 — frontend
+cd frontend
+npm run dev</code></pre>
+  </div>
+
+  <div class="step"><span class="num">6</span><h3 style="margin:.2rem 0">Sign in</h3></div>
+  <div class="card">
+    <p style="margin:0">Username: <code>president</code> &nbsp;·&nbsp; Password: <code>jciottawa2026</code></p>
+  </div>
+
+  <h2>Verify it's working</h2>
+  <pre><code>curl http://localhost:8000/api/health
+# → {"status":"ok","service":"member-tracker","version":"1.0.0"}</code></pre>
+  <p class="muted">Interactive API docs: <code>http://localhost:8000/docs</code></p>
+
+  <h2>Environment variables</h2>
+  <table>
+    <tr><th>File</th><th>Variable</th><th>Purpose</th></tr>
+    <tr><td>backend/.env</td><td><code>GEMINI_API_KEY</code></td><td>Enables Gemini AI (optional; falls back if absent)</td></tr>
+    <tr><td>backend/.env</td><td><code>GEMINI_MODEL</code></td><td>Model name (default <code>gemini-1.5-flash</code>)</td></tr>
+    <tr><td>backend/.env</td><td><code>MEMBER_TRACKER_API_KEY</code></td><td>Admin key (default <code>member-tracker-dev-key</code>)</td></tr>
+    <tr><td>backend/.env</td><td><code>MEMBER_TRACKER_DB_PATH</code></td><td>SQLite path (default <code>member_tracker.db</code>)</td></tr>
+    <tr><td>frontend/.env</td><td><code>VITE_API_BASE_URL</code></td><td>Backend URL (default <code>http://localhost:8000</code>)</td></tr>
+    <tr><td>frontend/.env</td><td><code>VITE_API_KEY</code></td><td>Must match the backend admin key</td></tr>
+  </table>
+
+  <h2>Troubleshooting</h2>
+  <div class="card warn"><strong>Port already in use</strong> — run <code>./stop.sh</code>, or override ports: <code>MGT_BACKEND_PORT=8001 MGT_FRONTEND_PORT=5177 ./start.sh</code>.</div>
+  <div class="card warn"><strong>AI answers look generic / say "template"</strong> — that's the deterministic fallback. Set <code>GEMINI_API_KEY</code> in <code>backend/.env</code> and restart the backend.</div>
+  <div class="card warn"><strong>Empty dashboard</strong> — re-run the seed step (step 4).</div>
+  <div class="card warn"><strong>Logs</strong> — check <code>.run/backend.log</code> and <code>.run/frontend.log</code>.</div>
+
+  <footer>
+    JCI NEXO — a JCI Ottawa initiative. See <code>EXPLANATION.html</code> for how it works and <code>README.md</code> for the API reference.
+  </footer>
+</div>
+</body>
+</html>
