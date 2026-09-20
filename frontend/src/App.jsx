@@ -186,7 +186,7 @@ function LPDashboard({ session, onLogout }) {
         {[
           ['dashboard', '🏠 Dashboard'],
           ['pulse', '📊 Chapter Pulse'],
-          ['events', '� Events & Outreach'],
+          ['events', '📣 Events & Outreach'],
           ['messages', '✉️ Messages'],
           ['leaderboard', '🏆 Leaderboard'],
         ].map(([id, label]) => (
