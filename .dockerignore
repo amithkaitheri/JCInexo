@@ -1,0 +1,21 @@
+**/node_modules
+frontend/dist
+.run
+*.log
+*.pid
+*.db
+*.sqlite*
+**/__pycache__
+**/*.pyc
+.env
+**/.env
+.git
+.gitignore
+*.md
+*.html
+.DS_Store
+**/.DS_Store
+Membership_Memberships_*.xlsx
+~$*.xlsx
+WhatsApp Image*.jpeg
+.kiro

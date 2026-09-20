@@ -48,6 +48,11 @@ _WORKBOOK = (
     / "Membership_Memberships_20260917100128.xlsx"
 )
 
+# A committed, anonymized fallback roster (no real PII) used when the private
+# membership workbook is not present — e.g. in the public repo / Docker image /
+# Render deploy. Same shape as the workbook parser: [[name, age_out_iso], ...].
+_DEMO_MEMBERS_JSON = Path(__file__).resolve().parent / "demo_members.json"
+
 STAGES = ["Inducted", "Candidate", "Prospective", "Inactive"]
 
 # Deterministic mentor + interest rotations so the Chapter Pulse analytics and
@@ -154,6 +159,23 @@ def _wipe_demo_tables(db_path):
         conn.close()
 
 
+def _load_demo_members():
+    """Return [(name, age_out_iso)], preferring the private workbook and
+    falling back to the committed anonymized JSON fixture when it's absent."""
+    if _WORKBOOK.exists():
+        return read_members_from_workbook(_WORKBOOK), _WORKBOOK.name
+    if _DEMO_MEMBERS_JSON.exists():
+        import json
+
+        with open(_DEMO_MEMBERS_JSON, encoding="utf-8") as f:
+            data = json.load(f)
+        return [(name, ao) for name, ao in data], _DEMO_MEMBERS_JSON.name
+    raise FileNotFoundError(
+        "No member source found: expected the membership workbook or "
+        f"{_DEMO_MEMBERS_JSON.name}."
+    )
+
+
 def main():
     db_path = os.getenv("MEMBER_TRACKER_DB_PATH", "member_tracker.db")
     init_db(db_path)
@@ -163,8 +185,8 @@ def main():
     repo = Repository(db_path=db_path, clock=clock)
     today = clock.current_date()
 
-    members = read_members_from_workbook(_WORKBOOK)
-    print(f"Read {len(members)} members from {_WORKBOOK.name}")
+    members, _source = _load_demo_members()
+    print(f"Read {len(members)} members from {_source}")
 
     catalog = default_badge_catalog(list(repo.get_config().milestones))
     # Four-signal scoring config (attendance, recency, stage, activity) summing

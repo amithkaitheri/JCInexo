@@ -274,6 +274,61 @@ def create_app(
             # Recommendations router not present yet — nothing to override.
             pass
 
+    # ---------------------------------------------------------------------
+    # Static frontend (single-service deploy).
+    #
+    # When a built React bundle is present (Vite ``dist/``), serve it from this
+    # same app so the whole product runs on ONE public URL (e.g. on Render):
+    #   * ``/assets/*`` and other build files are served directly.
+    #   * any non-``/api`` path falls back to ``index.html`` so client-side
+    #     routing / deep links work (SPA fallback).
+    # The API (``/api/*``) and docs (``/docs``) are registered above and take
+    # precedence. If no build is present (pure local dev with the Vite server),
+    # this is skipped entirely. The location is overridable via
+    # MEMBER_TRACKER_FRONTEND_DIST.
+    # ---------------------------------------------------------------------
+    _dist_env = os.getenv("MEMBER_TRACKER_FRONTEND_DIST", "").strip()
+    _dist_dir = _dist_env or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))),
+        "frontend",
+        "dist",
+    )
+    if os.path.isdir(_dist_dir) and os.path.isfile(
+        os.path.join(_dist_dir, "index.html")
+    ):
+        from fastapi.responses import FileResponse
+        from fastapi.staticfiles import StaticFiles
+
+        _assets_dir = os.path.join(_dist_dir, "assets")
+        if os.path.isdir(_assets_dir):
+            app.mount(
+                "/assets", StaticFiles(directory=_assets_dir), name="assets"
+            )
+
+        _index_path = os.path.join(_dist_dir, "index.html")
+
+        @app.get("/", include_in_schema=False)
+        def _spa_root():  # pragma: no cover - static serving
+            return FileResponse(_index_path)
+
+        @app.get("/{full_path:path}", include_in_schema=False)
+        def _spa_fallback(full_path: str):  # pragma: no cover - static serving
+            # Never shadow the API or docs.
+            if full_path.startswith("api/") or full_path in (
+                "docs",
+                "redoc",
+                "openapi.json",
+            ):
+                from fastapi import HTTPException
+
+                raise HTTPException(status_code=404)
+            # Serve a real static file when it exists (favicon, etc.), else the
+            # SPA entry point so client-side routes resolve.
+            candidate = os.path.join(_dist_dir, full_path)
+            if full_path and os.path.isfile(candidate):
+                return FileResponse(candidate)
+            return FileResponse(_index_path)
+
     return app
 
 

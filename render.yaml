@@ -1,0 +1,33 @@
+# Render Blueprint — deploy JCI NEXO as a single Docker web service.
+# The FastAPI backend serves the built React frontend, so the whole app runs
+# on ONE public URL (https://<service>.onrender.com).
+#
+# Usage: in Render, New + → "Blueprint", point it at this repo. Render reads
+# this file, builds the Dockerfile, and creates the service. After the first
+# deploy, set the GEMINI_API_KEY value in the service's Environment tab
+# (it is intentionally not stored in the repo).
+services:
+  - type: web
+    name: jcinexo
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Google Gemini — powers Ask Wellington, retention advice, and outreach
+      # emails. Set this secret in the Render dashboard (sync:false keeps it out
+      # of the repo). If unset, the app falls back to deterministic responses.
+      - key: GEMINI_API_KEY
+        sync: false
+      # Optional: pin the Gemini model (defaults to gemini-1.5-flash if unset).
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+      # Admin API key guarding threshold/snapshot/export endpoints. Change this
+      # for a real deployment; the frontend build uses the default dev key.
+      - key: MEMBER_TRACKER_API_KEY
+        value: member-tracker-dev-key
+      # Enable the offline retention-advice search backend for the demo.
+      - key: MEMBER_TRACKER_DEMO_SEARCH
+        value: "1"
