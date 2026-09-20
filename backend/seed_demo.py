@@ -150,9 +150,15 @@ def _wipe_demo_tables(db_path):
             "HEALTH_SCORE",
             "ATTENDANCE_RECORD",
             "RETENTION_RECOMMENDATION",
+            "MEMBER_STREAK",
+            "MEMBER_CREDENTIAL",
             "MEMBER",
         ):
-            conn.execute(f"DELETE FROM {table}")
+            # Best-effort: newer tables may not exist on an older DB.
+            try:
+                conn.execute(f"DELETE FROM {table}")
+            except Exception:
+                pass
         conn.execute("DELETE FROM ID_SEQUENCE WHERE name = 'member_id'")
         conn.commit()
     finally:
@@ -318,6 +324,34 @@ def main():
             created_at=datetime.now(timezone.utc),
         )
     print(f"Seeded {len(demo_applications)} pending membership applications.")
+
+    # Seed the Trail Trivia question bank (ImpactQuest mini-game).
+    try:
+        from trivia_questions import TRIVIA_QUESTIONS
+        n_trivia = repo.seed_trivia_questions(TRIVIA_QUESTIONS)
+        print(f"Seeded {n_trivia} trivia questions "
+              f"({repo.trivia_question_count()} total active).")
+    except Exception as exc:
+        print(f"  ! trivia seed skipped: {exc}")
+
+    # Provision a demo ImpactQuest member login so the member portal is testable
+    # out of the box. Uses member id "1" (the first seeded member). bcrypt may
+    # be absent in some environments — degrade gracefully.
+    try:
+        import bcrypt as _bcrypt
+        demo_email = "member@example.com"
+        demo_password = "impactquest"
+        first_member = repo.get_member("1")
+        if first_member is not None:
+            pw_hash = _bcrypt.hashpw(demo_password.encode(), _bcrypt.gensalt()).decode()
+            try:
+                repo.create_member_credential("1", demo_email, pw_hash)
+                print(f"Provisioned demo member login: {demo_email} / {demo_password} (member 1 — {first_member.name}).")
+            except Exception:
+                print(f"Demo member login already exists: {demo_email} / {demo_password}.")
+    except ImportError:
+        print("  ! demo member login skipped (bcrypt not installed).")
+
     print("Demo seed complete.")
 
 

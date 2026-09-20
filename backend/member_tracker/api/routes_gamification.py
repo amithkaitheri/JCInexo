@@ -262,4 +262,80 @@ def sync_gamification(
     return _build_response(repo, clock, member, just_unlocked_ids=unlocked_ids)
 
 
+# ---------------------------------------------------------------------------
+# ImpactQuest leaderboard
+# ---------------------------------------------------------------------------
+
+from pydantic import BaseModel as _BaseModel  # local import to avoid polluting the top
+
+
+class LeaderboardEntryResponse(_BaseModel):
+    rank: int
+    member_id: str
+    name: str
+    stage: str
+    total_points: int
+    tier_label: str
+    rank_name: str
+    rank_icon: str
+
+
+class LeaderboardResponse(_BaseModel):
+    entries: list[LeaderboardEntryResponse]
+    total_members: int
+    as_of: str
+
+
+_RANK_MAP = {
+    "rookie":      ("Owlet",        "🐣"),
+    "contributor": ("Scout",        "🦉"),
+    "active":      ("Ranger",       "🌲"),
+    "leader":      ("Trailblazer",  "🏔️"),
+    "champion":    ("Trail Master", "👑"),
+}
+
+
+@router.get(
+    "/leaderboard",
+    response_model=LeaderboardResponse,
+    summary="ImpactQuest global points leaderboard",
+)
+def get_leaderboard(
+    limit: int = 50,
+    repo: Repository = Depends(get_repository),
+    clock: Clock = Depends(get_clock),
+) -> LeaderboardResponse:
+    """Return members ranked by total engagement points, highest first.
+
+    Computed live from MEMBER_ACTIVITY — trivia points written by the game are
+    reflected immediately on the next call. ``limit`` caps rows (default 50).
+    """
+    from member_tracker.core import activity_points as _ap
+
+    rows = repo.get_leaderboard(limit=min(int(limit), 200))
+    entries = []
+    for row in rows:
+        pts = row["total_points"]
+        tier = _ap.current_tier(pts)
+        rank_name, rank_icon = _RANK_MAP.get(tier.key, ("Owlet", "🐣"))
+        entries.append(
+            LeaderboardEntryResponse(
+                rank=row["rank"],
+                member_id=row["member_id"],
+                name=row["name"],
+                stage=row["stage"],
+                total_points=pts,
+                tier_label=tier.label,
+                rank_name=rank_name,
+                rank_icon=rank_icon,
+            )
+        )
+
+    return LeaderboardResponse(
+        entries=entries,
+        total_members=len(entries),
+        as_of=clock.current_time().isoformat(),
+    )
+
+
 __all__ = ["router"]

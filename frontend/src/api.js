@@ -70,7 +70,7 @@ function buildUrl(path, params) {
  */
 async function request(
   path,
-  { method = 'GET', body, params, admin = false } = {}
+  { method = 'GET', body, params, admin = false, memberToken = null } = {}
 ) {
   const headers = {};
   let payload;
@@ -80,6 +80,9 @@ async function request(
   }
   if (admin) {
     headers['X-API-Key'] = API_KEY;
+  }
+  if (memberToken) {
+    headers['Authorization'] = `Bearer ${memberToken}`;
   }
 
   let response;
@@ -513,3 +516,81 @@ export default {
   getGamification,
   syncGamification,
 };
+
+// ---------------------------------------------------------------------------
+// ImpactQuest — Member Auth
+// ---------------------------------------------------------------------------
+
+/**
+ * POST /api/member/register — LP provisions a member login (admin-guarded).
+ * @param {{member_id: string, email: string, password: string}} body
+ */
+export async function memberRegister(body) {
+  return request('/api/member/register', { method: 'POST', body, admin: true });
+}
+
+/**
+ * POST /api/member/login — member email + password → { access_token, member_id, name, ... }
+ * @param {string} email
+ * @param {string} password
+ */
+export async function memberLogin(email, password) {
+  return request('/api/member/login', { method: 'POST', body: { email, password } });
+}
+
+/**
+ * GET /api/member/me — authenticated member's Basecamp profile.
+ * Requires a valid member JWT passed as Bearer token.
+ * @param {string} token
+ */
+export async function getMemberMe(token) {
+  return request('/api/member/me', { memberToken: token });
+}
+
+/**
+ * POST /api/member/logout — inform server of logout (no-op, JWT is stateless).
+ * @param {string} token
+ */
+export async function memberLogout(token) {
+  return request('/api/member/logout', { method: 'POST', memberToken: token });
+}
+
+// ---------------------------------------------------------------------------
+// ImpactQuest — Trail Trivia
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/trivia/daily — today's 3 questions (no answers exposed).
+ * Returns { date, questions, already_played, points_earned? }
+ * @param {string} token  member JWT
+ */
+export async function getDailyTrivia(token) {
+  return request('/api/trivia/daily', { memberToken: token });
+}
+
+/**
+ * POST /api/trivia/daily/submit — submit answers and earn points.
+ * @param {string} token  member JWT
+ * @param {Object<string,string>} answers  { "42": "b", "43": "a", "44": "c" }
+ * Returns TriviaResultResponse
+ */
+export async function submitDailyTrivia(token, answers) {
+  return request('/api/trivia/daily/submit', {
+    method: 'POST',
+    body: { answers },
+    memberToken: token,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// ImpactQuest — Leaderboard
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /api/leaderboard?limit= — global points leaderboard.
+ * Returns { entries: [...], total_members, as_of }
+ * @param {number} [limit=50]
+ */
+export async function getLeaderboard(limit = 50) {
+  return request('/api/leaderboard', { params: { limit } });
+}

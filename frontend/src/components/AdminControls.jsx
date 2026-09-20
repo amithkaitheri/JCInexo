@@ -8,6 +8,7 @@ import {
   exportAll,
   getDashboard,
   syncGamification,
+  memberRegister,
   ApiError,
 } from '../api.js';
 import MemberAdmin from './MemberAdmin.jsx';
@@ -940,6 +941,94 @@ function HandoverControls() {
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * ImpactQuest — Provision a member login (LP-only)
+ * ------------------------------------------------------------------------- */
+function ProvisionLogin() {
+  const [memberId, setMemberId] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [membersLoading, setMembersLoading] = useState(true);
+
+  const loadMembers = useCallback(async () => {
+    setMembersLoading(true);
+    try {
+      const collected = [];
+      let page = 1, totalPages = 1;
+      do {
+        const res = await getDashboard({ page });
+        if (Array.isArray(res.rows)) collected.push(...res.rows);
+        totalPages = res.total_pages ?? 1;
+        page++;
+      } while (page <= totalPages && page <= 10);
+      setMembers(collected);
+    } catch { /* silent */ }
+    finally { setMembersLoading(false); }
+  }, []);
+
+  useEffect(() => { loadMembers(); }, [loadMembers]);
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setError(null); setSuccess(null);
+    if (!memberId || !email.trim() || password.length < 8) {
+      setError('Select a member, enter their email, and choose a password (min 8 chars).');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await memberRegister({ member_id: memberId, email: email.trim(), password });
+      setSuccess(`Login created for member ${memberId} (${email.trim()}).`);
+      setEmail(''); setPassword(''); setMemberId('');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Could not create login.');
+    } finally { setSubmitting(false); }
+  }, [memberId, email, password]);
+
+  return (
+    <section className="admin-card" aria-label="Provision member login">
+      <h3>🦉 ImpactQuest — Create member login</h3>
+      <p className="admin-hint">
+        Give a member their ImpactQuest credentials so they can sign in, play Trail Trivia, and appear on the leaderboard.
+      </p>
+      <form className="admin-form" onSubmit={handleSubmit}>
+        <div className="admin-field">
+          <label htmlFor="provision-member">Member</label>
+          <select id="provision-member" value={memberId}
+            onChange={(e) => setMemberId(e.target.value)} disabled={submitting || membersLoading}>
+            <option value="">{membersLoading ? 'Loading…' : 'Select a member…'}</option>
+            {members.map((m) => (
+              <option key={m.member_id} value={m.member_id}>{m.name} ({m.stage})</option>
+            ))}
+          </select>
+        </div>
+        <div className="admin-field">
+          <label htmlFor="provision-email">Email</label>
+          <input id="provision-email" type="email" value={email}
+            onChange={(e) => setEmail(e.target.value)} disabled={submitting}
+            placeholder="member@example.com" />
+        </div>
+        <div className="admin-field">
+          <label htmlFor="provision-pw">Password (min 8 chars)</label>
+          <input id="provision-pw" type="password" value={password}
+            onChange={(e) => setPassword(e.target.value)} disabled={submitting}
+            placeholder="••••••••" minLength={8} />
+        </div>
+        {error && <div className="admin-error" role="alert">⚠️ {error}</div>}
+        {success && <div className="admin-success" role="status">✓ {success}</div>}
+        <button type="submit" className="admin-btn admin-btn--primary"
+          disabled={submitting || !memberId}>
+          {submitting ? 'Creating…' : '🔑 Create login'}
+        </button>
+      </form>
+    </section>
+  );
+}
+
 export default function AdminControls({ onChanged, refreshKey, onStartHandover } = {}) {
   return (
     <section className="admin-controls" aria-label="Administrative controls">
@@ -961,6 +1050,7 @@ export default function AdminControls({ onChanged, refreshKey, onStartHandover }
       ) : null}
       <div className="admin-grid">
         <MemberAdmin onChanged={onChanged} />
+        <ProvisionLogin />
         <ThresholdConfig onChanged={onChanged} refreshKey={refreshKey} />
         <AttendanceEntry onChanged={onChanged} />
       </div>

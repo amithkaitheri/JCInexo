@@ -269,6 +269,52 @@ _SCHEMA_STATEMENTS = [
         UNIQUE (member_id, period)
     )
     """,
+    # -----------------------------------------------------------------------
+    # ImpactQuest — member authentication, trivia game, and streak tracking
+    # -----------------------------------------------------------------------
+
+    # MEMBER_CREDENTIAL — per-member login credentials for the member-facing
+    # ImpactQuest portal. Separate from the president CONFIG credentials.
+    # password_hash stores a bcrypt hash (never plaintext). email is the login
+    # identifier and must be unique across all member accounts.
+    """
+    CREATE TABLE IF NOT EXISTS MEMBER_CREDENTIAL (
+        member_id     TEXT PRIMARY KEY REFERENCES MEMBER(id),
+        email         TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        created_at    TEXT NOT NULL,
+        last_login_at TEXT
+    )
+    """,
+    # TRIVIA_QUESTION — the Trail Trivia question bank. correct is one of
+    # 'a'|'b'|'c'|'d'. difficulty ∈ easy|medium|hard. active=1 means the
+    # question is eligible to be drawn for the daily puzzle.
+    """
+    CREATE TABLE IF NOT EXISTS TRIVIA_QUESTION (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        question   TEXT NOT NULL,
+        option_a   TEXT NOT NULL,
+        option_b   TEXT NOT NULL,
+        option_c   TEXT NOT NULL,
+        option_d   TEXT NOT NULL,
+        correct    TEXT NOT NULL CHECK (correct IN ('a','b','c','d')),
+        category   TEXT NOT NULL,
+        difficulty TEXT NOT NULL DEFAULT 'medium'
+                       CHECK (difficulty IN ('easy','medium','hard')),
+        active     INTEGER NOT NULL DEFAULT 1
+    )
+    """,
+    # MEMBER_STREAK — daily trivia play streak per member. current_streak is
+    # the consecutive-day count; last_played_date is the ISO date of the most
+    # recent completed play (NULL = never played).
+    """
+    CREATE TABLE IF NOT EXISTS MEMBER_STREAK (
+        member_id       TEXT PRIMARY KEY REFERENCES MEMBER(id),
+        current_streak  INTEGER NOT NULL DEFAULT 0,
+        longest_streak  INTEGER NOT NULL DEFAULT 0,
+        last_played_date TEXT
+    )
+    """,
 ]
 
 
@@ -302,6 +348,57 @@ def _migrate_add_member_columns(conn: sqlite3.Connection) -> None:
             conn.execute(f"ALTER TABLE MEMBER ADD COLUMN {column} TEXT")
 
 
+def _migrate_impactquest_tables(conn: sqlite3.Connection) -> None:
+    """Idempotently add ImpactQuest tables to a pre-existing database.
+
+    The three new tables (MEMBER_CREDENTIAL, TRIVIA_QUESTION, MEMBER_STREAK)
+    are created by ``_SCHEMA_STATEMENTS`` with ``CREATE TABLE IF NOT EXISTS``,
+    so this function only needs to handle cases where the DB was initialized
+    before these statements were added — it is a no-op on a fresh database.
+    """
+    existing_tables = {
+        row[0]
+        for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        ).fetchall()
+    }
+    if "MEMBER_CREDENTIAL" not in existing_tables:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS MEMBER_CREDENTIAL (
+                member_id     TEXT PRIMARY KEY REFERENCES MEMBER(id),
+                email         TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                created_at    TEXT NOT NULL,
+                last_login_at TEXT
+            )
+        """)
+    if "TRIVIA_QUESTION" not in existing_tables:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS TRIVIA_QUESTION (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                question   TEXT NOT NULL,
+                option_a   TEXT NOT NULL,
+                option_b   TEXT NOT NULL,
+                option_c   TEXT NOT NULL,
+                option_d   TEXT NOT NULL,
+                correct    TEXT NOT NULL CHECK (correct IN ('a','b','c','d')),
+                category   TEXT NOT NULL,
+                difficulty TEXT NOT NULL DEFAULT 'medium'
+                               CHECK (difficulty IN ('easy','medium','hard')),
+                active     INTEGER NOT NULL DEFAULT 1
+            )
+        """)
+    if "MEMBER_STREAK" not in existing_tables:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS MEMBER_STREAK (
+                member_id        TEXT PRIMARY KEY REFERENCES MEMBER(id),
+                current_streak   INTEGER NOT NULL DEFAULT 0,
+                longest_streak   INTEGER NOT NULL DEFAULT 0,
+                last_played_date TEXT
+            )
+        """)
+
+
 def init_db(conn_or_path: Union[sqlite3.Connection, str, None] = None) -> None:
     """Create all core tables idempotently and seed CONFIG defaults.
 
@@ -326,6 +423,7 @@ def init_db(conn_or_path: Union[sqlite3.Connection, str, None] = None) -> None:
         for statement in _SCHEMA_STATEMENTS:
             conn.execute(statement)
         _migrate_add_member_columns(conn)
+        _migrate_impactquest_tables(conn)
         _seed_config(conn)
         conn.commit()
     finally:

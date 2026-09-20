@@ -356,6 +356,8 @@ def _register_default_routers(app: FastAPI) -> None:
         ("member_tracker.api.routes_activities", "router"),
         ("member_tracker.api.routes_identity", "router"),
         ("member_tracker.api.routes_applications", "router"),
+        ("member_tracker.api.routes_member_auth", "router"),
+        ("member_tracker.api.routes_trivia", "router"),
     ):
         try:
             module = __import__(module_name, fromlist=[attr])

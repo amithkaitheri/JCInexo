@@ -12,7 +12,7 @@ import NexoLogo from './NexoLogo.jsx';
  * Demo credentials (seeded in CONFIG): username "president" / password
  * "jciottawa2026". A production build would use a real identity provider.
  */
-export default function Login({ onLogin } = {}) {
+export default function Login({ onLogin, onSwitchToMember } = {}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -96,6 +96,15 @@ export default function Login({ onLogin } = {}) {
         <p className="login-hint">
           Demo: <code>president</code> / <code>jciottawa2026</code>
         </p>
+
+        {typeof onSwitchToMember === 'function' ? (
+          <div className="login-switch">
+            <span>Chapter member?</span>
+            <button type="button" className="login-link-btn" onClick={onSwitchToMember}>
+              🦉 Member Login →
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

@@ -1224,6 +1224,266 @@ class Repository:
             unlocked_at=unlocked_at_iso,
         )
 
+    # -----------------------------------------------------------------------
+    # ImpactQuest — member credentials
+    # -----------------------------------------------------------------------
+
+    def create_member_credential(
+        self,
+        member_id: str,
+        email: str,
+        password_hash: str,
+    ) -> None:
+        """Store a bcrypt password hash for a member (ImpactQuest login).
+
+        Raises ``sqlite3.IntegrityError`` on duplicate ``email`` or
+        ``member_id`` (caller converts to a 409 HTTP error).
+        """
+        now = _iso_utc(self._clock.current_time())
+        with self._transaction() as conn:
+            conn.execute(
+                """
+                INSERT INTO MEMBER_CREDENTIAL
+                    (member_id, email, password_hash, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (member_id, email.lower().strip(), password_hash, now),
+            )
+
+    def get_credential_by_email(self, email: str) -> Optional[dict]:
+        """Return ``{member_id, email, password_hash}`` for the email, or None."""
+        conn = self._connect()
+        try:
+            row = conn.execute(
+                "SELECT member_id, email, password_hash FROM MEMBER_CREDENTIAL "
+                "WHERE email = ?",
+                (email.lower().strip(),),
+            ).fetchone()
+        finally:
+            conn.close()
+        if row is None:
+            return None
+        return {
+            "member_id": row["member_id"],
+            "email": row["email"],
+            "password_hash": row["password_hash"],
+        }
+
+    def touch_last_login(self, member_id: str) -> None:
+        """Update ``last_login_at`` to now for a member credential row."""
+        now = _iso_utc(self._clock.current_time())
+        with self._transaction() as conn:
+            conn.execute(
+                "UPDATE MEMBER_CREDENTIAL SET last_login_at = ? "
+                "WHERE member_id = ?",
+                (now, member_id),
+            )
+
+    # -----------------------------------------------------------------------
+    # ImpactQuest — streak tracking
+    # -----------------------------------------------------------------------
+
+    def get_streak(self, member_id: str) -> dict:
+        """Return ``{current_streak, longest_streak, last_played_date}`` (defaults 0/None)."""
+        conn = self._connect()
+        try:
+            row = conn.execute(
+                "SELECT current_streak, longest_streak, last_played_date "
+                "FROM MEMBER_STREAK WHERE member_id = ?",
+                (member_id,),
+            ).fetchone()
+        finally:
+            conn.close()
+        if row is None:
+            return {"current_streak": 0, "longest_streak": 0, "last_played_date": None}
+        return {
+            "current_streak": int(row["current_streak"]),
+            "longest_streak": int(row["longest_streak"]),
+            "last_played_date": row["last_played_date"],
+        }
+
+    def update_streak(self, member_id: str, played_date: str) -> dict:
+        """Update the streak for a completed trivia play on ``played_date`` (ISO YYYY-MM-DD).
+
+        Rules:
+        - If ``last_played_date`` is the day before ``played_date`` -> increment.
+        - If ``last_played_date`` == ``played_date`` -> no-op (already counted).
+        - Otherwise (gap or first play) -> reset to 1.
+        Returns the updated streak dict.
+        """
+        from datetime import date as _date, timedelta
+
+        current = self.get_streak(member_id)
+        last = current["last_played_date"]
+        today = _date.fromisoformat(played_date)
+
+        if last is None:
+            new_streak = 1
+        elif last == played_date:
+            return current  # already recorded today
+        else:
+            yesterday = (today - timedelta(days=1)).isoformat()
+            if last == yesterday:
+                new_streak = current["current_streak"] + 1
+            else:
+                new_streak = 1
+
+        new_longest = max(new_streak, current["longest_streak"])
+        with self._transaction() as conn:
+            conn.execute(
+                """
+                INSERT INTO MEMBER_STREAK
+                    (member_id, current_streak, longest_streak, last_played_date)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(member_id) DO UPDATE SET
+                    current_streak   = excluded.current_streak,
+                    longest_streak   = excluded.longest_streak,
+                    last_played_date = excluded.last_played_date
+                """,
+                (member_id, new_streak, new_longest, played_date),
+            )
+        return {
+            "current_streak": new_streak,
+            "longest_streak": new_longest,
+            "last_played_date": played_date,
+        }
+
+    # -----------------------------------------------------------------------
+    # ImpactQuest — trivia question bank
+    # -----------------------------------------------------------------------
+
+    def get_daily_trivia_questions(self, seed_date: str) -> list:
+        """Return 3 active questions deterministically seeded by ``seed_date``.
+
+        All active questions are fetched (stable id order), then 3 are picked
+        using the date string as a pseudo-random seed so every member sees the
+        same daily puzzle. Each dict carries id + options + a private
+        ``_correct`` key (stripped before sending to the client).
+        """
+        import hashlib
+        import random
+
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                "SELECT id, question, option_a, option_b, option_c, option_d, correct "
+                "FROM TRIVIA_QUESTION WHERE active = 1 ORDER BY id"
+            ).fetchall()
+        finally:
+            conn.close()
+
+        if not rows:
+            return []
+
+        seed_int = int(hashlib.md5(seed_date.encode()).hexdigest(), 16)
+        indices = list(range(len(rows)))
+        rng = random.Random(seed_int)
+        rng.shuffle(indices)
+        selected = [rows[i] for i in indices[:3]]
+
+        return [
+            {
+                "id": r["id"],
+                "question": r["question"],
+                "option_a": r["option_a"],
+                "option_b": r["option_b"],
+                "option_c": r["option_c"],
+                "option_d": r["option_d"],
+                "_correct": r["correct"],
+            }
+            for r in selected
+        ]
+
+    def seed_trivia_questions(self, questions: list) -> int:
+        """Bulk-insert trivia questions, skipping duplicates by question text.
+
+        Returns the count of newly inserted questions.
+        """
+        inserted = 0
+        for q in questions:
+            # Skip if a question with the same text already exists.
+            conn = self._connect()
+            try:
+                existing = conn.execute(
+                    "SELECT 1 FROM TRIVIA_QUESTION WHERE question = ? LIMIT 1",
+                    (q["question"],),
+                ).fetchone()
+            finally:
+                conn.close()
+            if existing:
+                continue
+            with self._transaction() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO TRIVIA_QUESTION
+                        (question, option_a, option_b, option_c, option_d,
+                         correct, category, difficulty, active)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+                    """,
+                    (
+                        q["question"],
+                        q["option_a"],
+                        q["option_b"],
+                        q["option_c"],
+                        q["option_d"],
+                        q["correct"],
+                        q["category"],
+                        q.get("difficulty", "medium"),
+                    ),
+                )
+            inserted += 1
+        return inserted
+
+    def trivia_question_count(self) -> int:
+        """Return total number of active trivia questions."""
+        conn = self._connect()
+        try:
+            row = conn.execute(
+                "SELECT COUNT(*) AS n FROM TRIVIA_QUESTION WHERE active = 1"
+            ).fetchone()
+        finally:
+            conn.close()
+        return int(row["n"]) if row else 0
+
+    # -----------------------------------------------------------------------
+    # ImpactQuest — leaderboard
+    # -----------------------------------------------------------------------
+
+    def get_leaderboard(self, limit: int = 50) -> list:
+        """Return members ranked by total engagement points, highest first.
+
+        Each entry: {rank, member_id, name, stage, total_points}.
+        """
+        conn = self._connect()
+        try:
+            rows = conn.execute(
+                """
+                SELECT
+                    m.id    AS member_id,
+                    m.name  AS name,
+                    m.stage AS stage,
+                    COALESCE(SUM(a.points), 0) AS total_points
+                FROM MEMBER m
+                LEFT JOIN MEMBER_ACTIVITY a ON a.member_id = m.id
+                GROUP BY m.id
+                ORDER BY total_points DESC
+                LIMIT ?
+                """,
+                (int(limit),),
+            ).fetchall()
+        finally:
+            conn.close()
+        return [
+            {
+                "rank": idx + 1,
+                "member_id": r["member_id"],
+                "name": r["name"],
+                "stage": r["stage"],
+                "total_points": int(r["total_points"]),
+            }
+            for idx, r in enumerate(rows)
+        ]
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -1381,5 +1641,6 @@ __all__ = [
     "ConfigView",
     "HealthScoreRecord",
     "EarnedBadgeRecord",
+    "ActivityRecord",
     "StoredRecommendation",
 ]

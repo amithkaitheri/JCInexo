@@ -12,114 +12,130 @@ import ChapterPulse from './components/ChapterPulse.jsx';
 import EventsOutreach from './components/EventsOutreach.jsx';
 import Messages from './components/Messages.jsx';
 import Login from './components/Login.jsx';
+import MemberLogin from './components/MemberLogin.jsx';
+import Basecamp from './components/Basecamp.jsx';
+import TrailTrivia from './components/TrailTrivia.jsx';
+import Leaderboard from './components/Leaderboard.jsx';
 import NexoLogo from './components/NexoLogo.jsx';
-import { whoami } from './api.js';
+import { whoami, getMemberMe } from './api.js';
 
-/**
- * App — application shell for the Smart Member Growth Tracker.
- *
- * Composition:
- *   - A dashboard-level Wellington the Wise mascot in the header offering
- *     contextual guidance (Req 7, Mascot Dashboard Guidance).
- *   - MemberDashboard: the member list. Each row exposes a "🦉 Trail" action
- *     (any member) and, for at-risk members, a "🦉 Advice" action.
- *   - WellingtonsTrail: the selected member's gamified progress trail, mascot
- *     state, and earned badges (Req 7, Visual Progress Trail).
- *   - WellingtonAdviceCard: the AI retention agent card for an at-risk member.
- *   - HandoverQuest: the 3-step guided handover wizard (Req 7), launched from
- *     the header or AdminControls.
- */
-export default function App() {
-  // The at-risk member currently selected for retention advice (or null).
+const LP_SESSION_KEY = 'pulsejci_session';
+const MEMBER_SESSION_KEY = 'impactquest_member_session';
+
+// ---------------------------------------------------------------------------
+// Root login chooser — shown when neither session is active
+// ---------------------------------------------------------------------------
+function LoginChooser({ onLPLogin, onMemberLogin }) {
+  const [mode, setMode] = useState('member'); // 'member' | 'lp'
+  return mode === 'lp'
+    ? <Login onLogin={onLPLogin} onSwitchToMember={() => setMode('member')} />
+    : <MemberLogin onLogin={onMemberLogin} onSwitchToLP={() => setMode('lp')} />;
+}
+
+// ---------------------------------------------------------------------------
+// ImpactQuest shell (member view)
+// ---------------------------------------------------------------------------
+function ImpactQuestShell({ memberSession, onLogout }) {
+  const [view, setView] = useState('basecamp');   // 'basecamp' | 'trivia'
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [newBadges, setNewBadges] = useState([]);
+
+  const handlePlayTrivia = useCallback(() => setView('trivia'), []);
+  const handleTriviaDone = useCallback((result) => {
+    // Carry newly unlocked badges into Basecamp for the celebration overlay.
+    if (result?.newly_unlocked_badges?.length > 0) {
+      setNewBadges(result.newly_unlocked_badges);
+    }
+    setRefreshKey((k) => k + 1);
+    setView('basecamp');
+  }, []);
+
+  return (
+    <div className="iq-shell">
+      <header className="iq-header">
+        <div className="iq-brand">
+          <NexoLogo size={32} />
+          <span className="iq-brand-text">
+            Impact<span className="iq-brand-accent">Quest</span>
+            <span className="iq-brand-sub"> 🦉 Owl Trail</span>
+          </span>
+        </div>
+        <nav className="iq-nav">
+          <button
+            type="button"
+            className={`iq-nav-btn${view === 'basecamp' ? ' iq-nav-btn--active' : ''}`}
+            onClick={() => setView('basecamp')}
+          >
+            🏕️ Basecamp
+          </button>
+          <button
+            type="button"
+            className={`iq-nav-btn${view === 'trivia' ? ' iq-nav-btn--active' : ''}`}
+            onClick={() => setView('trivia')}
+          >
+            🎯 Trivia
+          </button>
+        </nav>
+      </header>
+
+      <main className="iq-main">
+        {view === 'trivia' ? (
+          <TrailTrivia
+            session={memberSession}
+            onDone={handleTriviaDone}
+            onBack={() => setView('basecamp')}
+          />
+        ) : (
+          <div className="iq-basecamp-layout">
+            <div className="iq-basecamp-primary">
+              <Basecamp
+                session={memberSession}
+                onPlayTrivia={handlePlayTrivia}
+                onLogout={onLogout}
+                refreshKey={refreshKey}
+                newBadges={newBadges}
+                onClearBadges={() => setNewBadges([])}
+              />
+            </div>
+            <aside className="iq-basecamp-aside">
+              <Leaderboard
+                refreshKey={refreshKey}
+                highlightMemberId={memberSession?.member_id}
+              />
+            </aside>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// LP dashboard shell (unchanged)
+// ---------------------------------------------------------------------------
+function LPDashboard({ session, onLogout }) {
   const [selectedMember, setSelectedMember] = useState(null);
-
-  // The member whose Wellington's Trail is currently shown (or null).
   const [trailMember, setTrailMember] = useState(null);
-
-  // Whether the Handover Quest modal is open.
   const [handoverOpen, setHandoverOpen] = useState(false);
-
-  // Which top-level tab is active: 'dashboard' | 'pulse' | 'events' | 'messages'.
   const [activeTab, setActiveTab] = useState('dashboard');
-
-  // Role-based greeting for the local chapter president (from GET /api/whoami).
-  const [greeting, setGreeting] = useState('');
-
-  // Auth session (persisted). `null` until the president signs in. Hydrated
-  // from localStorage so a reload keeps the dashboard unlocked until logout.
-  const [session, setSession] = useState(() => {
-    try {
-      const raw = localStorage.getItem('pulsejci_session');
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const handleLogin = useCallback((s) => {
-    setSession(s);
-    try {
-      localStorage.setItem('pulsejci_session', JSON.stringify(s));
-    } catch {
-      /* ignore storage errors */
-    }
-    if (s && s.greeting) setGreeting(s.greeting);
-  }, []);
-
-  const handleLogout = useCallback(() => {
-    setSession(null);
-    try {
-      localStorage.removeItem('pulsejci_session');
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!session) return undefined;
-    let cancelled = false;
-    whoami()
-      .then((res) => {
-        if (!cancelled) setGreeting(res.greeting || '');
-      })
-      .catch(() => {
-        if (!cancelled) setGreeting(session.greeting || '');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [session]);
-
-  // Bumped whenever an admin write changes member data, so the list, alerts,
-  // and KPI summary re-fetch and stay in sync.
+  const [greeting, setGreeting] = useState(session?.greeting || '');
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const handleDataChanged = useCallback(() => {
-    setRefreshKey((k) => k + 1);
-  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    whoami()
+      .then((res) => { if (!cancelled) setGreeting(res.greeting || ''); })
+      .catch(() => { if (!cancelled) setGreeting(session?.greeting || ''); });
+    return () => { cancelled = true; };
+  }, [session]);
 
+  const handleDataChanged = useCallback(() => setRefreshKey((k) => k + 1), []);
   const handleSelectMember = useCallback((row) => {
-    if (!row) return;
-    setSelectedMember({ id: row.member_id, name: row.name });
+    if (row) setSelectedMember({ id: row.member_id, name: row.name });
   }, []);
-
-  const handleClearSelection = useCallback(() => {
-    setSelectedMember(null);
-  }, []);
-
   const handleViewTrail = useCallback((row) => {
-    if (!row) return;
-    setTrailMember({ id: row.member_id, name: row.name });
+    if (row) setTrailMember({ id: row.member_id, name: row.name });
   }, []);
-
-  const handleClearTrail = useCallback(() => {
-    setTrailMember(null);
-  }, []);
-
-  // Gate the whole dashboard behind the president login.
-  if (!session) {
-    return <Login onLogin={handleLogin} />;
-  }
 
   return (
     <div className="app">
@@ -130,17 +146,11 @@ export default function App() {
               <NexoLogo size={34} />
             </span>
             <span className="app-brand-text">
-              <h1>
-                JCI <span className="app-brand-accent">NEXO</span>
-              </h1>
+              <h1>JCI <span className="app-brand-accent">NEXO</span></h1>
               <p className="app-tagline">Connect. Lead. Impact.</p>
             </span>
           </div>
           {greeting ? <p className="app-welcome">👋 {greeting}</p> : null}
-          <p className="app-subtitle">
-            Member journey, age-out alerts, attendance milestones, health
-            scores, and Wellington's Trail.
-          </p>
         </div>
         <div className="app-header-actions">
           <button
@@ -153,7 +163,7 @@ export default function App() {
           <button
             type="button"
             className="wellington-btn app-logout-btn"
-            onClick={handleLogout}
+            onClick={onLogout}
             title="Sign out"
           >
             ⎋ Logout
@@ -161,7 +171,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Dashboard-level mascot guidance (Req 7, Mascot Dashboard Guidance). */}
       <div className="app-mascot-guidance">
         <WellingtonMascot
           state="HAPPY"
@@ -173,36 +182,23 @@ export default function App() {
 
       <StatsBar refreshKey={refreshKey} />
 
-      {/* Top-level tabs */}
       <nav className="app-tabs" aria-label="Sections">
-        <button
-          type="button"
-          className={`app-tab${activeTab === 'dashboard' ? ' app-tab--active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          🏠 Dashboard
-        </button>
-        <button
-          type="button"
-          className={`app-tab${activeTab === 'pulse' ? ' app-tab--active' : ''}`}
-          onClick={() => setActiveTab('pulse')}
-        >
-          📊 Chapter Pulse
-        </button>
-        <button
-          type="button"
-          className={`app-tab${activeTab === 'events' ? ' app-tab--active' : ''}`}
-          onClick={() => setActiveTab('events')}
-        >
-          📣 Events & Outreach
-        </button>
-        <button
-          type="button"
-          className={`app-tab${activeTab === 'messages' ? ' app-tab--active' : ''}`}
-          onClick={() => setActiveTab('messages')}
-        >
-          ✉️ Messages
-        </button>
+        {[
+          ['dashboard', '🏠 Dashboard'],
+          ['pulse', '📊 Chapter Pulse'],
+          ['events', '� Events & Outreach'],
+          ['messages', '✉️ Messages'],
+          ['leaderboard', '🏆 Leaderboard'],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            className={`app-tab${activeTab === id ? ' app-tab--active' : ''}`}
+            onClick={() => setActiveTab(id)}
+          >
+            {label}
+          </button>
+        ))}
       </nav>
 
       {activeTab === 'pulse' ? (
@@ -217,91 +213,142 @@ export default function App() {
         <main className="app-main app-main--single">
           <Messages onChanged={handleDataChanged} />
         </main>
+      ) : activeTab === 'leaderboard' ? (
+        <main className="app-main app-main--single">
+          <Leaderboard refreshKey={refreshKey} />
+        </main>
       ) : (
-      <main className="app-main app-layout">
-        <section className="app-primary">
-          <MemberDashboard
-            onSelectMember={handleSelectMember}
-            selectedMemberId={selectedMember ? selectedMember.id : null}
-            onViewTrail={handleViewTrail}
-            refreshKey={refreshKey}
-          />
-        </section>
-
-        <aside className="app-sidebar">
-          {/* Wellington's Trail — the selected member's gamified progress. */}
-          {trailMember ? (
-            <div className="app-trail">
-              <div className="app-trail-toolbar">
-                <button
-                  type="button"
-                  className="wellington-btn"
-                  onClick={handleClearTrail}
-                >
-                  ✕ Close trail
-                </button>
+        <main className="app-main app-layout">
+          <section className="app-primary">
+            <MemberDashboard
+              onSelectMember={handleSelectMember}
+              selectedMemberId={selectedMember?.id ?? null}
+              onViewTrail={handleViewTrail}
+              refreshKey={refreshKey}
+            />
+          </section>
+          <aside className="app-sidebar">
+            {trailMember ? (
+              <div className="app-trail">
+                <div className="app-trail-toolbar">
+                  <button type="button" className="wellington-btn"
+                    onClick={() => setTrailMember(null)}>
+                    ✕ Close trail
+                  </button>
+                </div>
+                <WellingtonsTrail
+                  key={trailMember.id}
+                  memberId={trailMember.id}
+                  memberName={trailMember.name}
+                  refreshKey={refreshKey}
+                />
               </div>
-              <WellingtonsTrail
-                key={trailMember.id}
-                memberId={trailMember.id}
-                memberName={trailMember.name}
-                refreshKey={refreshKey}
-              />
-            </div>
-          ) : (
-            <section className="wellingtons-trail wellingtons-trail--empty">
-              <h3 className="trail-title">🦉 Wellington's Trail</h3>
-              <WellingtonMascot state="HAPPY" size="sm" showBanner={false} />
-              <p className="trail-hint">
-                Click a member's <strong>🦉 Trail</strong> button to see their
-                badges, current stage, and next milestone.
-              </p>
-            </section>
-          )}
-
-          {/* Wellington the Wise retention agent — shown for the selected
-              at-risk member, directly beneath the trail. */}
-          {selectedMember ? (
-            <div className="app-wellington">
-              <div className="app-wellington-toolbar">
-                <button
-                  type="button"
-                  className="wellington-btn"
-                  onClick={handleClearSelection}
-                >
-                  ✕ Close advice
-                </button>
+            ) : (
+              <section className="wellingtons-trail wellingtons-trail--empty">
+                <h3 className="trail-title">🦉 Wellington's Trail</h3>
+                <WellingtonMascot state="HAPPY" size="sm" showBanner={false} />
+                <p className="trail-hint">
+                  Click a member's <strong>🦉 Trail</strong> button to see their
+                  badges, current stage, and next milestone.
+                </p>
+              </section>
+            )}
+            {selectedMember ? (
+              <div className="app-wellington">
+                <div className="app-wellington-toolbar">
+                  <button type="button" className="wellington-btn"
+                    onClick={() => setSelectedMember(null)}>
+                    ✕ Close advice
+                  </button>
+                </div>
+                <WellingtonAdviceCard
+                  key={selectedMember.id}
+                  memberId={selectedMember.id}
+                  memberName={selectedMember.name}
+                />
               </div>
-              <WellingtonAdviceCard
-                key={selectedMember.id}
-                memberId={selectedMember.id}
-                memberName={selectedMember.name}
-              />
-            </div>
-          ) : null}
-
-          {/* Age-out + at-risk alerts, shown last in the sidebar. */}
-          <AlertsPanel refreshKey={refreshKey} />
-        </aside>
-
-        <section className="app-admin">
-          <AdminControls
-            onChanged={handleDataChanged}
-            refreshKey={refreshKey}
-          />
-        </section>
-      </main>
+            ) : null}
+            <AlertsPanel refreshKey={refreshKey} />
+          </aside>
+          <section className="app-admin">
+            <AdminControls
+              onChanged={handleDataChanged}
+              refreshKey={refreshKey}
+            />
+          </section>
+        </main>
       )}
 
-      {/* 3-step guided Handover Quest (Req 7). */}
       <HandoverQuest
         open={handoverOpen}
         onClose={() => setHandoverOpen(false)}
         onDone={handleDataChanged}
       />
-
-      {/* Floating "Ask Wellington" chat widget (bottom-right). */}
       <MemberQuery />
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Root App — session routing
+// ---------------------------------------------------------------------------
+export default function App() {
+  // LP (president) session
+  const [lpSession, setLpSession] = useState(() => {
+    try {
+      const raw = localStorage.getItem(LP_SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
+
+  // Member session
+  const [memberSession, setMemberSession] = useState(() => {
+    try {
+      const raw = localStorage.getItem(MEMBER_SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
+
+  // Silently validate persisted member token on startup — clear if expired.
+  useEffect(() => {
+    if (!memberSession?.token) return;
+    getMemberMe(memberSession.token).catch(() => {
+      localStorage.removeItem(MEMBER_SESSION_KEY);
+      setMemberSession(null);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLPLogin = useCallback((s) => {
+    setLpSession(s);
+    try { localStorage.setItem(LP_SESSION_KEY, JSON.stringify(s)); } catch { /* */ }
+  }, []);
+
+  const handleLPLogout = useCallback(() => {
+    setLpSession(null);
+    try { localStorage.removeItem(LP_SESSION_KEY); } catch { /* */ }
+  }, []);
+
+  const handleMemberLogin = useCallback((s) => {
+    setMemberSession(s);
+    try { localStorage.setItem(MEMBER_SESSION_KEY, JSON.stringify(s)); } catch { /* */ }
+  }, []);
+
+  const handleMemberLogout = useCallback(() => {
+    setMemberSession(null);
+    try { localStorage.removeItem(MEMBER_SESSION_KEY); } catch { /* */ }
+  }, []);
+
+  // Route to the right shell.
+  if (lpSession) {
+    return <LPDashboard session={lpSession} onLogout={handleLPLogout} />;
+  }
+  if (memberSession) {
+    return <ImpactQuestShell memberSession={memberSession} onLogout={handleMemberLogout} />;
+  }
+  return (
+    <LoginChooser
+      onLPLogin={handleLPLogin}
+      onMemberLogin={handleMemberLogin}
+    />
   );
 }
